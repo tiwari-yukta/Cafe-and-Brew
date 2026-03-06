@@ -7,6 +7,10 @@ export const useAuth = () => {
   const { user, isLoading, setUserFromFirebase, logout: storeLogout } = useAuthStore();
 
   useEffect(() => {
+    if (!auth) {
+      setUserFromFirebase(null);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUserFromFirebase(firebaseUser);
     });
@@ -14,7 +18,9 @@ export const useAuth = () => {
   }, [setUserFromFirebase]);
 
   const logout = async () => {
-    await firebaseSignOut(auth);
+    if (auth) {
+      await firebaseSignOut(auth);
+    }
     storeLogout();
   };
 
